@@ -102,6 +102,40 @@
     function ticketHTML(t){return `<article class="ticketcard${t.pending?' pending':''}" data-ticket="${t.title}"><h4>${t.title}</h4><p>${t.meta}</p><p>${t.detail}</p><div class="ticketstatus">${t.pending?'待处理':(t.warning?'已购 · 请核对同行人票':'已确认 / 已购')}</div><label class="ticketcheck"><input type="checkbox" data-ticket-check="${t.title}" ${t.pending?'':'checked'}><span>已核对 / 已保存</span></label><div class="actions">${t.url?`<a href="${t.url}" target="_blank" rel="noopener">打开官方页面</a>`:''}</div></article>`}
     function hotelHTML(h){return `<div class="hotelcard"><h4>${h.name}<span class="hotelbadge">已确认</span></h4><p>${h.dates}</p><p>${h.address}</p><div class="transport"><b>交通：</b>${h.transport}</div></div>`}
     function checkHTML(c,i){return `<label class="check ${c[2]==='done'?'done':''}"><input type="checkbox" data-check="${i}" ${c[2]==='done'?'checked':''}><span><b>${c[0]}</b><br>${c[1]}<br><span class="status">${c[2]==='done'?'已完成':c[2]==='optional'?'可选':'需要处理'}</span></span></label>`}
+    // Latest Van Gogh ticket update: 2 October 2026, 14:00.
+    // Keep the companion-ticket/audio-guide check visible because the supplied ticket shows one Adult ticket for Harry He.
+    const vanGoghDay=days.find(d=>d.date==='10/2');
+    if(vanGoghDay){
+      vanGoghDay.title='De Pijp → 梵高 → Spiegelkwartier → NHOGIRL → 9 Straatjes';
+      vanGoghDay.sub='梵高票面14:00；上午慢逛，下午接购物';
+      vanGoghDay.route=['Hotel De Hallen','De Pijp','Van Gogh Museum','Spiegelkwartier','NHOGIRL','9 Straatjes','Jordaan'];
+      vanGoghDay.actions=[['梵高官方购票','https://tickets.vangoghmuseum.nl/en/tickets'],['NHOGIRL信息','https://nhogirl.com/blog/about'],['今日路线',dir(['Hotel De Hallen Amsterdam','De Pijp Amsterdam','Van Gogh Museum','Spiegelkwartier Amsterdam','NHOGIRL Amsterdam','De 9 Straatjes','Jordaan'])]];
+      vanGoghDay.stops=[
+        ['11:00–13:00','De Pijp午餐＋咖啡','从 Hotel De Hallen 出发，先在 De Pijp 慢逛和吃午餐；再步行／电车前往 Museumplein。'],
+        ['13:30','前往 Museumplein','从 De Pijp 到梵高博物馆预留约20分钟，建议13:30左右离开。'],
+        ['14:00–16:00','Van Gogh Museum','票面入场时间为10/2 14:00；可直接前往主入口。预约时间后最多迟到30分钟。','已购','saved'],
+        ['16:15–17:15','Spiegelkwartier','从 Museumplein 步行约15分钟，逛精品店、古着、设计小店与配饰。'],
+        ['17:15（建议）','NHOGIRL','预约制 vintage showroom；需提前通过 Instagram DM 确认时段，营业时间周四至周日13:00–19:00。','待预约','pending'],
+        ['18:30–20:00','9 Straatjes / Jordaan','继续逛男装、买手店、家居和独立书店，再安排晚餐。']
+      ];
+      vanGoghDay.note='梵高博物馆：10/2 14:00，票面为 Adults；入场从预约时间起最多迟到30分钟。请另确认同行人的独立票券及中文语音导览。';
+    }
+    const vanGoghTicket=tickets.find(t=>t.title==='Van Gogh Museum');
+    if(vanGoghTicket){
+      vanGoghTicket.meta='10/2 14:00 · 已购';
+      vanGoghTicket.detail='票面：Adults · Harry He；入场从预约时间起最多迟到30分钟。请确认同行人是否也有独立票券及中文语音导览。';
+      vanGoghTicket.pending=false;
+      vanGoghTicket.warning=true;
+    }
+    const vanGoghCheck=checks.find(c=>c[0]==='Van Gogh Museum');
+    if(vanGoghCheck){
+      vanGoghCheck[0]='梵高同行人票 / 中文语音导览';
+      vanGoghCheck[1]='核对同行人是否有独立票券，并确认中文语音导览是否已包含';
+      vanGoghCheck[2]='pending';
+    }
+    const vanGoghStatus=document.querySelector('.statusstrip .statuschip.pending');
+    if(vanGoghStatus){vanGoghStatus.className='statuschip';vanGoghStatus.textContent='梵高已购 · 10/2 14:00'}
+
     document.querySelector('#dayList').innerHTML=days.map(dayHTML).join('');
     document.querySelector('#hotelList').innerHTML=hotels.map(hotelHTML).join('');
     document.querySelector('#ticketList').innerHTML=tickets.map(ticketHTML).join('');
